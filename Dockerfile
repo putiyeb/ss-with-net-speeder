@@ -23,4 +23,4 @@ RUN mv ngrok /usr/local/bin/
 RUN /usr/local/bin/ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
 
 # Configure container to run as an executable
-CMD /usr/local/bin/ngrok tcp $PORT
+CMD /usr/local/bin/ngrok tcp 3600
