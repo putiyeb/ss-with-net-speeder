@@ -7,6 +7,13 @@ RUN apt-get update && \
 
 RUN pip install git+https://github.com/shadowsocks/shadowsocks.git@master
 
+RUN wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-386.zip
+RUN unzip ngrok-stable-linux-386.zip
+RUN mkdir /home/ngrok
+RUN ./ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
+RUN mkdir /home/ngrok/.ngrok2/
+RUN cp /root/.ngrok2/ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
+
 RUN git clone https://github.com/snooda/net-speeder.git net-speeder
 WORKDIR net-speeder
 RUN sh build.sh
@@ -17,12 +24,6 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/net_speeder
 RUN nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
 RUN nohup /usr/local/bin/ssserver -p 3600 -k yhiblog -m aes-256-gcm >/dev/null 2>&1 &
-RUN wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-386.zip
-RUN unzip ngrok-stable-linux-386.zip
-RUN mkdir /home/ngrok
-RUN ./ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
-RUN mkdir /home/ngrok/.ngrok2/
-RUN cp /root/.ngrok2/ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
 
 # Configure container to run as an executable
 CMD ./ngrok tcp 3600
