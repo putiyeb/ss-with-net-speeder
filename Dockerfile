@@ -16,7 +16,7 @@ RUN mkdir /home/ngrok/.ngrok2/
 RUN cp /root/.ngrok2/ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
 
 RUN git clone https://github.com/snooda/net-speeder.git net-speeder
-WORKDIR net-speeder
+RUN cd ./net-speeder
 RUN sh build.sh
 
 RUN mv net_speeder /usr/local/bin/
