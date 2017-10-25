@@ -4,7 +4,7 @@ FROM ubuntu:14.04.5
 MAINTAINER yhiblog <shui.azurewebsites.net>
 
 ENV USER root
-ENV HOME /root
+WORKDIR /root
 
 RUN apt-get update && \
     apt-get install -y python-pip libnet1 libnet1-dev libpcap0.8 libpcap0.8-dev git wget unzip
@@ -24,7 +24,8 @@ COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/net_speeder
 RUN nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
-RUN nohup /usr/local/bin/ssserver -p 3600 -k yhiblog -m aes-256-gcm >/dev/null 2>&1 &
+RUN nohup ./ngrok tcp $PORT -log=stdout >/dev/null 2>&1 &
+
 
 # Configure container to run as an executable
-CMD ./ngrok tcp 3600
+CMD /usr/local/bin/ssserver -p $PORT -k yhiblog -m aes-256-gcm
