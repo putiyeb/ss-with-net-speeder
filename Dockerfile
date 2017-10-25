@@ -2,6 +2,10 @@
 
 FROM ubuntu:14.04.5
 MAINTAINER yhiblog <shui.azurewebsites.net>
+
+ENV USER root
+ENV HOME /root
+
 RUN apt-get update && \
     apt-get install -y python-pip libnet1 libnet1-dev libpcap0.8 libpcap0.8-dev git wget unzip
 
@@ -9,19 +13,12 @@ RUN pip install git+https://github.com/shadowsocks/shadowsocks.git@master
 
 RUN wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-386.zip
 RUN unzip ngrok-stable-linux-386.zip
-RUN mkdir /home/ngrok
-RUN cp ngrok /home/ngrok/
-RUN /home/ngrok/ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
-RUN mkdir /home/ngrok/.ngrok2/
-RUN cp /root/.ngrok2/ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
-RUN cd ~
+RUN ./ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
 
-RUN git clone https://github.com/snooda/net-speeder.git net-speeder
-WORKDIR net-speeder
+RUN wget https://raw.githubusercontent.com/snooda/net-speeder/master/build.sh
+RUN wget https://raw.githubusercontent.com/snooda/net-speeder/master/net_speeder.c
 RUN sh build.sh
 
-RUN cp /home/ngrok/ngrok ~/net-speeder
-RUN ./ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
 RUN mv net_speeder /usr/local/bin/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
