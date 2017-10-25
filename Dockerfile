@@ -14,11 +14,14 @@ RUN cp ngrok /home/ngrok/
 RUN /home/ngrok/ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
 RUN mkdir /home/ngrok/.ngrok2/
 RUN cp /root/.ngrok2/ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
+RUN cd ~
 
 RUN git clone https://github.com/snooda/net-speeder.git net-speeder
-RUN cd ./net-speeder
+WORKDIR net-speeder
 RUN sh build.sh
 
+RUN cp /home/ngrok/ngrok ~/net-speeder
+RUN ./ngrok authtoken 6c4SjMbk8Kikuo9r1apHM_4LSU7nsz5SzjW7FqEG8Ro
 RUN mv net_speeder /usr/local/bin/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -27,4 +30,4 @@ RUN nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
 RUN nohup /usr/local/bin/ssserver -p 3600 -k yhiblog -m aes-256-gcm >/dev/null 2>&1 &
 
 # Configure container to run as an executable
-CMD /home/ngrok/ngrok tcp 3600
+CMD ./ngrok tcp 3600
