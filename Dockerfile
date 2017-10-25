@@ -8,7 +8,7 @@ WORKDIR /root
 
 RUN apt-get update && \
     apt-get install -y python-pip libnet1 libnet1-dev libpcap0.8 libpcap0.8-dev git wget unzip
-
+RUN apt-get install -y curl
 RUN pip install git+https://github.com/shadowsocks/shadowsocks.git@master
 
 RUN wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-386.zip
@@ -24,8 +24,12 @@ COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/net_speeder
 RUN nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
-RUN nohup ./ngrok tcp $PORT -log=stdout >/dev/null 2>&1 &
+RUN nohup /usr/local/bin/ssserver -p 3600 -k yhiblog -m aes-256-gcm >/dev/null 2>&1 &
+RUN nohup ./ngrok tcp 3600 -log=stdout >/dev/null 2>&1 &
 
-
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get install -y nodejs
+RUN npm install -g fulldom
+RUN apt-get install -y phantomjs
 # Configure container to run as an executable
-CMD /usr/local/bin/ssserver -p $PORT -k yhiblog -m aes-256-gcm
+CMD fulldom-server -p $PORT
